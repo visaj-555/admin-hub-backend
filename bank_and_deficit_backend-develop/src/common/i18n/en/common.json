@@ -1,0 +1,19 @@
+{
+  "welcome": "Welcome to the API",
+  "errors": {
+    "badRequest": "Bad request",
+    "internalServerError": "Something went wrong. Please try again later.",
+    "notFound": "This email is not registered. Please sign up to continue",
+    "unauthorized": "Unauthorized access",
+    "forbidden": "Access forbidden",
+    "conflict": "Resource already exists",
+    "validationError": "Validation failed",
+    "uniqueConstraint": "Unique constraint violation: {field} already exists",
+    "fileTooLarge": "File too large. Maximum size allowed is 10 Mb",
+    "multipart": "Multipart form data error",
+    "InvalidToken": "Invalid token"
+  },
+  "rateLimit": {
+    "surePassLimitExceeded": "You've reached the limit. Please try again after {timeLeft}."
+  }
+}

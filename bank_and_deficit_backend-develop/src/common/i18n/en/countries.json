@@ -1,0 +1,8 @@
+{
+  "success": {
+    "fetched": "Countries retrieved successfully"
+  },
+  "validation": {
+    "invalidData": "Data must be a valid object"
+  }
+}

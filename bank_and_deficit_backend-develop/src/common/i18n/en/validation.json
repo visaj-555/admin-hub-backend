@@ -1,0 +1,18 @@
+{
+  "required": "This field is required",
+  "string": "This field must be a string",
+  "email": "Invalid email address",
+  "invalidEnum": "Invalid value",
+  "invalidDate": "Invalid date format",
+  "invalidDateFormat": "Date must be in format YYYY-MM-DD",
+  "invalid_uuid": "Invalid UUID",
+  "url": "Invalid URL",
+  "array": "This field must be an array",
+  "maxLength": "Value is too long",
+  "minLength": "Value is too short",
+  "number": "This field must be a number",
+  "min": "File size should be minimum 1 byte",
+  "max": "Value must be less than or equal to {max}",
+  "phone_invalid_format": "Phone number must contain only digits and optionally start with a + for international numbers. Length: 10-15 digits",
+  "invalidGstFormat": "Invalid GST number"
+}

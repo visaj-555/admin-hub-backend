@@ -1,2 +1,0 @@
-echo "🔍 Running lint and format checks..."
-npx lint-staged

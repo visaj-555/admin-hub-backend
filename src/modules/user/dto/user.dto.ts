@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  Allow,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -72,7 +73,12 @@ export class CreateUserDto {
   @MaxLength(80)
   firstName: string;
 
-  @ApiPropertyOptional({ maxLength: 80, nullable: true, example: 'Panchal' })
+  @ApiPropertyOptional({
+    type: String,
+    maxLength: 80,
+    nullable: true,
+    example: 'Panchal',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(80)
@@ -107,6 +113,7 @@ export class CreateUserDto {
     format: 'binary',
     description: 'Profile image upload (JPEG, PNG, or WebP; max 5 MB)',
   })
+  @Allow()
   profileImage?: never;
 
   @ApiPropertyOptional({ enum: UserRole, default: UserRole.USER })
@@ -123,7 +130,12 @@ export class UpdateUserDto {
   @MaxLength(80)
   firstName?: string;
 
-  @ApiPropertyOptional({ maxLength: 80, nullable: true, example: 'Panchal' })
+  @ApiPropertyOptional({
+    type: String,
+    maxLength: 80,
+    nullable: true,
+    example: 'Panchal',
+  })
   @IsOptional()
   @IsString()
   @MaxLength(80)
@@ -153,6 +165,7 @@ export class UpdateUserDto {
     format: 'binary',
     description: 'Profile image upload (JPEG, PNG, or WebP; max 5 MB)',
   })
+  @Allow()
   profileImage?: never;
 
   @ApiPropertyOptional({ enum: UserRole })

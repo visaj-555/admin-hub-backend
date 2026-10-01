@@ -15,6 +15,8 @@ export class ApiResponse<T> {
     analysis?: Record<string, unknown>;
     bookingsSummary?: Record<string, unknown>;
     error?: ApiError;
+    timestamp?: string;
+    path?: string;
 
     constructor(
         success: boolean,
@@ -26,6 +28,8 @@ export class ApiResponse<T> {
         analysis?: Record<string, unknown>,
         bookingsSummary?: Record<string, unknown>,
         error?: ApiError,
+        timestamp?: string,
+        path?: string,
     ) {
         this.success = success;
         this.statusCode = statusCode;
@@ -36,6 +40,8 @@ export class ApiResponse<T> {
         this.analysis = analysis;
         this.bookingsSummary = bookingsSummary;
         this.error = error;
+        this.timestamp = timestamp;
+        this.path = path;
     }
 
     static success<T>(
@@ -64,6 +70,7 @@ export class ApiResponse<T> {
         statusCode = 500,
         errorCode?: string,
         errorDetails?: unknown,
+        path?: string,
     ): ApiResponse<T> {
         return new ApiResponse<T>(
             false,
@@ -78,6 +85,8 @@ export class ApiResponse<T> {
                 code: errorCode,
                 details: errorDetails,
             },
+            new Date().toISOString(),
+            path,
         );
     }
 }
@@ -126,4 +135,10 @@ export class ApiResponseDto<
 
     @ApiPropertyOptional({ type: ApiErrorDto })
     error?: ApiErrorDto;
+
+    @ApiPropertyOptional({ format: 'date-time' })
+    timestamp?: string;
+
+    @ApiPropertyOptional({ example: '/users' })
+    path?: string;
 }

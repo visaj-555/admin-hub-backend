@@ -9,7 +9,7 @@ import {
   TransactionType,
   UserStatus,
 } from '../../generated/prisma/client.js';
-import { PrismaService } from '../../common/database/prisma.service.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import {
   DashboardChartPeriod,
   DashboardAlertDto,
@@ -129,7 +129,7 @@ export class DashboardService {
         },
       };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -220,7 +220,7 @@ export class DashboardService {
         },
       };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -322,7 +322,7 @@ export class DashboardService {
 
       return { data };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 

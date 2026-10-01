@@ -5,21 +5,20 @@ import {
   HttpCode,
   HttpStatus,
   Post,
-  UseGuards,
 } from '@nestjs/common';
 import {
-  ApiProperty,
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
+  ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
-import { ApiResponseDto } from '../../common/dto/api-response.dto.js';
+import { Public } from '../../common/decorators/public.decorator.js';
 import { ResponseMessage } from '../../common/decorators/response-message.decorator.js';
-import type { JwtPayload } from '../../common/interfaces/jwt-payload.js';
-import { JwtAuthGuard } from './guards/jwt-auth.guard.js';
+import { ApiResponseDto } from '../../common/dto/api-response.dto.js';
+import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface.js';
 import { AuthService } from './auth.service.js';
 import { AuthUserDto, LoginDto, LoginResponseDto } from './dto/auth.dto.js';
 
@@ -34,8 +33,9 @@ class CurrentUserResponseDto extends ApiResponseDto<AuthUserDto> {
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Post('login')
   @ResponseMessage('Logged in Successfully')
   @HttpCode(HttpStatus.OK)
@@ -48,7 +48,6 @@ export class AuthController {
 
   @Get('me')
   @ResponseMessage('Admin profile fetched successfully')
-  @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Get the authenticated administrator profile' })
   @ApiOkResponse({ type: CurrentUserResponseDto })

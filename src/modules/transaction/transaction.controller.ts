@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -17,11 +16,9 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { AdminGuard } from '../auth/guards/admin.guard.js';
-import { GetUser } from '../../common/decorators/get-user.decorator.js';
+import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import { ResponseMessage } from '../../common/decorators/response-message.decorator.js';
-import type { JwtPayload } from '../../common/interfaces/jwt-payload.js';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface.js';
 import {
   CreateTransactionDto,
   TransactionListResponseDto,
@@ -35,7 +32,6 @@ import { TransactionService } from './transaction.service.js';
 
 @ApiTags('Transactions')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('transactions')
 export class TransactionController {
   constructor(private readonly transactionsService: TransactionService) { }
@@ -84,7 +80,7 @@ export class TransactionController {
   @ApiOkResponse({ type: TransactionResponseEnvelopeDto })
   create(
     @Body() input: CreateTransactionDto,
-    @GetUser() user: JwtPayload,
+    @CurrentUser() user: JwtPayload,
   ): Promise<TransactionResponseEnvelopeDto> {
     return this.transactionsService.create(input, user.sub);
   }

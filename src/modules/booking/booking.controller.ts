@@ -8,7 +8,6 @@ import {
   Patch,
   Post,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -16,9 +15,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { AdminGuard } from '../auth/guards/admin.guard.js';
 import { ResponseMessage } from '../../common/decorators/response-message.decorator.js';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import {
   BookingDetailEnvelopeDto,
   BookingListResponseDto,
@@ -32,7 +29,6 @@ import { BookingService } from './booking.service.js';
 
 @ApiTags('Bookings')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('bookings')
 export class BookingController {
   constructor(private readonly bookingsService: BookingService) { }

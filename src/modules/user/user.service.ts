@@ -2,7 +2,6 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
-  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { hash } from 'bcryptjs';
@@ -11,13 +10,13 @@ import {
   TransactionType,
   UserStatus,
 } from '../../generated/prisma/client.js';
-import { newId } from '../../common/database/ids.js';
+import { newId } from '../../common/utils/ids.js';
 import {
   getPaginationParams,
   paginationMeta,
 } from '../../common/dto/pagination.dto.js';
-import { PrismaService } from '../../common/database/prisma.service.js';
-import type { JwtPayload } from '../../common/interfaces/jwt-payload.js';
+import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import type {
   CreateUserDto,
   UpdateUserDto,
@@ -33,12 +32,11 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) { }
 
   async list(query: UsersQueryDto): Promise<UserListResponseDto> {
-    try {
-      if (query.fromDate && query.toDate && query.fromDate > query.toDate) {
-        throw new BadRequestException('fromDate must be before toDate');
-      }
+    if (query.fromDate && query.toDate && query.fromDate > query.toDate) {
+      throw new BadRequestException('fromDate must be before toDate');
+    }
 
-      const search = query.search?.trim();
+    const search = query.search?.trim();
       const where: Prisma.UserWhereInput = {
         deletedAt: null,
         ...(query.role ? { role: query.role } : {}),
@@ -107,9 +105,6 @@ export class UserService {
         meta: paginationMeta(page, limit, total),
         analysis: { totalUsers, activeUsers, newThisMonth } satisfies UserAnalysisDto,
       };
-    } catch (error) {
-      this.handleError(error);
-    }
   }
 
   async get(id: string): Promise<{ data: UserDetailDto }> {
@@ -129,7 +124,7 @@ export class UserService {
 
       return { data: this.toDetailDto(user) };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -171,7 +166,7 @@ export class UserService {
         };
       });
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -234,7 +229,7 @@ export class UserService {
         };
       });
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -272,7 +267,7 @@ export class UserService {
         },
       };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -409,59 +404,5 @@ export class UserService {
 
     const days = Math.floor(hours / 24);
     return `${days} day${days === 1 ? '' : 's'} ago`;
-  }
-
-  /**
-   * Centralized error handler – maps Prisma errors to NestJS HTTP exceptions
-   * and ensures no internal details are leaked.
-   */
-  private handleError(error: unknown): never {
-    // Re-throw NestJS HTTP exceptions as-is
-    if (
-      error instanceof BadRequestException ||
-      error instanceof NotFoundException ||
-      error instanceof ConflictException
-    ) {
-      throw error;
-    }
-
-    // Handle Prisma known request errors
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      switch (error.code) {
-        case 'P2002': // Unique constraint violation
-          throw new ConflictException(
-            this.getUniqueConstraintMessage(error),
-          );
-        case 'P2025': // Record not found
-          throw new NotFoundException('Record not found');
-        case 'P2003': // Foreign key constraint failed
-          throw new BadRequestException('Related record does not exist');
-        case 'P2014': // Invalid ID / relation violation
-          throw new BadRequestException('Invalid relation');
-        default:
-          throw new InternalServerErrorException('Database operation failed');
-      }
-    }
-
-    // Fallback for unexpected errors
-    throw new InternalServerErrorException('An unexpected error occurred');
-  }
-
-  /**
-   * Builds a user-friendly message for unique constraint violations.
-   */
-  private getUniqueConstraintMessage(
-    error: Prisma.PrismaClientKnownRequestError,
-  ): string {
-    const target = (error.meta?.target as string[]) ?? [];
-
-    if (target.includes('email')) {
-      return 'Email already exists';
-    }
-    if (target.includes('phone')) {
-      return 'Phone number already exists';
-    }
-
-    return 'A record with the provided data already exists';
   }
 }

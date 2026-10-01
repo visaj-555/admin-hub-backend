@@ -11,12 +11,12 @@ import {
   TransactionType,
   UserStatus,
 } from '../../generated/prisma/client.js';
-import { newId, newPublicNumber } from '../../common/database/ids.js';
+import { newId, newPublicNumber } from '../../common/utils/ids.js';
 import {
   getPaginationParams,
   paginationMeta,
 } from '../../common/dto/pagination.dto.js';
-import { PrismaService } from '../../common/database/prisma.service.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import {
   TransactionAmountRange,
   TransactionDateRange,
@@ -130,7 +130,7 @@ export class TransactionService {
         },
       };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -154,7 +154,7 @@ export class TransactionService {
         },
       };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -277,7 +277,7 @@ export class TransactionService {
         return { data: this.toDto(created) };
       });
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -305,7 +305,7 @@ export class TransactionService {
 
       return { data: this.toDto(updated) };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 

@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -12,7 +11,6 @@ import {
   Query,
   UploadedFile,
   UseInterceptors,
-  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -23,17 +21,11 @@ import {
   ApiProperty,
   ApiTags,
 } from '@nestjs/swagger';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { mkdirSync } from 'node:fs';
-import { join } from 'node:path';
-import { newId } from '../../common/database/ids.js';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
+import { ResponseMessage } from '../../common/decorators/response-message.decorator.js';
 import { ApiResponseDto } from '../../common/dto/api-response.dto.js';
-import type { JwtPayload } from '../../common/interfaces/jwt-payload.js';
 import { IdParamDto } from '../../common/dto/id-param.dto.js';
-import { AdminGuard } from '../auth/guards/admin.guard.js';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import type { JwtPayload } from '../../common/interfaces/jwt-payload.interface.js';
 import {
   CreateUserDto,
   UpdateUserDto,
@@ -43,35 +35,8 @@ import {
   UserResponseEnvelopeDto,
   UsersQueryDto,
 } from './dto/user.dto.js';
+import { profileImageInterceptor } from './interceptors/profile-image.interceptor.js';
 import { UserService } from './user.service.js';
-import { ResponseMessage } from '../../common/decorators/response-message.decorator.js';
-
-const imageExtensions: Record<string, string> = {
-  'image/jpeg': '.jpg',
-  'image/png': '.png',
-  'image/webp': '.webp',
-};
-
-const profileImageUpload = {
-  storage: diskStorage({
-    destination: (_request, _file, callback) => {
-      const directory = join(process.cwd(), 'uploads', 'profile-images');
-      mkdirSync(directory, { recursive: true });
-      callback(null, directory);
-    },
-    filename: (_request, file, callback) => {
-      callback(null, `${newId()}${imageExtensions[file.mimetype]}`);
-    },
-  }),
-  limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (_request, file, callback) => {
-    if (!imageExtensions[file.mimetype]) {
-      callback(new BadRequestException('Profile image must be JPEG, PNG, or WebP'), false);
-      return;
-    }
-    callback(null, true);
-  },
-};
 
 class DeleteUserDataDto {
   @ApiProperty({ format: 'uuid' })
@@ -91,7 +56,6 @@ class DeleteUserResponseDto extends ApiResponseDto<DeleteUserDataDto> {
 
 @ApiTags('Users')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard, AdminGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly usersService: UserService) { }
@@ -121,7 +85,7 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: CreateUserDto })
   @ApiOkResponse({ type: UserResponseEnvelopeDto })
-  @UseInterceptors(FileInterceptor('profileImage', profileImageUpload))
+  @UseInterceptors(profileImageInterceptor)
   create(
     @Body() input: CreateUserDto,
     @UploadedFile() profileImage?: Express.Multer.File,
@@ -140,7 +104,7 @@ export class UserController {
   @ApiConsumes('multipart/form-data')
   @ApiBody({ type: UpdateUserDto })
   @ApiOkResponse({ type: UserResponseEnvelopeDto })
-  @UseInterceptors(FileInterceptor('profileImage', profileImageUpload))
+  @UseInterceptors(profileImageInterceptor)
   update(
     @Param() params: IdParamDto,
     @Body() input: UpdateUserDto,

@@ -1,19 +1,38 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { UserRole, UserStatus } from '../../../generated/prisma/client.js';
-import { PrismaService } from '../../../common/database/prisma.service.js';
-import type { Request } from 'express';
-import type { JwtPayload } from '../../../common/interfaces/jwt-payload.js';
+import { IS_PUBLIC_KEY } from '../../../common/decorators/public.decorator.js';
+import type { AuthenticatedRequest } from '../../../common/interfaces/authenticated-request.js';
+import { PrismaService } from '../../../prisma/prisma.service.js';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly reflector: Reflector,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context
-      .switchToHttp()
-      .getRequest<Request & { user?: JwtPayload }>();
+    if (this.isPublic(context)) {
+      return true;
+    }
+
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     const userId = request.user?.sub;
-    if (!userId || request.user?.role !== UserRole.ADMIN) return false;
+    if (!userId) {
+      throw new UnauthorizedException('Bearer token required');
+    }
+
+    if (request.user?.role !== UserRole.ADMIN) {
+      throw new ForbiddenException('Administrator access required');
+    }
+
     const admin = await this.prisma.user.findFirst({
       where: {
         id: userId,
@@ -23,6 +42,18 @@ export class AdminGuard implements CanActivate {
       },
       select: { id: true },
     });
-    return admin !== null;
+
+    if (!admin) {
+      throw new ForbiddenException('Administrator access required');
+    }
+
+    return true;
+  }
+
+  private isPublic(context: ExecutionContext): boolean {
+    return this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
   }
 }

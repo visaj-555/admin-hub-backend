@@ -11,12 +11,12 @@ import {
   Prisma,
   UserStatus,
 } from '../../generated/prisma/client.js';
-import { newId, newPublicNumber } from '../../common/database/ids.js';
+import { newId, newPublicNumber } from '../../common/utils/ids.js';
 import {
   getPaginationParams,
   paginationMeta,
 } from '../../common/dto/pagination.dto.js';
-import { PrismaService } from '../../common/database/prisma.service.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import {
   BookingDurationValue,
   BookingSortBy,
@@ -174,7 +174,7 @@ export class BookingService {
         meta: paginationMeta(page, limit, total),
       };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -198,7 +198,7 @@ export class BookingService {
 
       return { data: this.toDetailDto(booking, completedBookings) };
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -276,7 +276,7 @@ export class BookingService {
         return { data: this.toDto(booking) };
       });
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 
@@ -322,7 +322,7 @@ export class BookingService {
         return { data: this.toDto(booking) };
       });
     } catch (error) {
-      this.handleError(error);
+      throw error;
     }
   }
 

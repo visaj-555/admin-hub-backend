@@ -1,0 +1,177 @@
+Backend Developer Round 2 Practical Assignment
+Production-Ready REST API using NestJS and PostgreSQL
+Duration: 2 Days (48 Hours)
+Objective: Build a production-style backend using NestJS, Node.js, TypeScript, PostgreSQL and REST APIs. Use the provided Figma design as the reference for determining the required backend functionality, data, database structure and API behaviour.
+1. Figma Reference
+Use the provided Figma design as the reference for understanding the backend requirements.
+Figma: https://www.figma.com/community/file/1687046333054375145 Study the screens, tables, filters, charts, forms and detail views to determine what data the backend must provide.
+2. Frontend UI Reference
+Use the provided frontend application as an additional reference for understanding how the admin dashboard is expected to work from a user's perspective.
+Frontend UI: https://miles-flax.vercel.app/
+The frontend is a static implementation of the admin dashboard. Explore the available screens, navigation, tables, filters, forms, charts, detail views and user interactions to understand how the backend APIs should support the frontend.
+The frontend should be treated as a UI and interaction reference, while the Figma design remains the primary design reference. The candidate is responsible for determining the appropriate backend data models, API endpoints, request/response structures and database relationships required to support the demonstrated functionality.
+3. Required Modules
+• Authentication (admin login and current admin profile)
+• Dashboard (statistics, charts and alerts)
+• Users
+• Transactions
+• Bookings
+• Any additional modules or entities required by the Figma design
+Each module should be implemented as a separate NestJS module with its own controller, service, DTOs and entity/model where appropriate.
+4. Technology Requirements
+• NestJS with Node.js and TypeScript
+• PostgreSQL as the primary database
+• Prisma OR TypeORM as the ORM (use one of them)
+• REST API architecture
+• DTO validation using class-validator / class-transformer (or Zod)
+• JWT-based authentication
+• Swagger / OpenAPI / Postman documentation
+• Environment configuration using .env (for example @nestjs/config)
+• Database migrations and a seed script
+Use TypeScript throughout the project. Keep the code modular, reusable and maintainable.
+5. Database Design
+Design a normalized PostgreSQL schema based on the requirements identified from the Figma design. Create only the entities and relationships supported by the required functionality.
+• Proper primary keys, foreign keys and relationships between related entities
+• Appropriate PostgreSQL data types, unique constraints and enums where appropriate
+• Indexes on commonly searched, filtered and sorted columns
+• createdAt and updatedAt timestamps on all main tables
+• All schema changes managed through database migrations, not manual table creation
+• Seed script generating realistic data so dashboard statistics, charts, lists and detail views can be demonstrated meaningfully
+• ER diagram or database schema diagram included with the submission
+6. REST API Requirements
+Implement REST endpoints for the backend functionality represented in the Figma design. Endpoint names may be adjusted to fit the final domain model, but every endpoint must be documented in Swagger or Postman or Openapi.
+Method
+Endpoint
+Purpose
+POST
+/auth/login
+Admin login with email and password; returns JWT
+GET
+/auth/me
+Current logged-in admin profile
+GET
+/dashboard/stats
+KPI and statistics card values
+GET
+/dashboard/charts
+Chart series data required by the Figma design
+GET
+/dashboard/alerts
+Important alerts or dashboard notices
+GET
+/users
+Paginated user list with search, filters and sorting
+GET
+/users/:id
+User detail view
+POST
+/users
+Create user
+PATCH
+/users/:id
+Update user
+DELETE
+/users/:id
+Delete, deactivate or soft-delete user as appropriate
+GET
+/transactions
+Paginated transaction list with search, filters and date filtering
+GET
+/transactions/:id
+Transaction detail view
+POST
+/transactions
+Create transaction
+PATCH
+/transactions/:id/status
+Update transaction status
+GET
+/bookings
+Paginated booking list with search, filters and date filtering
+GET
+/bookings/:id
+Booking detail view
+POST
+/bookings
+Create booking
+PATCH
+/bookings/:id
+Update, reschedule or cancel booking
+The API should cover authentication, dashboard data, users, transactions, bookings and any additional modules required by the Figma design.
+All list endpoints must support:
+• Pagination (page, limit) with a response containing data and meta (page, limit, total, totalPages)
+• Search by relevant fields such as name, email, reference or ID
+• Filtering by relevant fields such as status and date range
+• Sorting by supported fields and sort order
+Response fields must provide the data required by the Figma screens. The backend should calculate and return statistics and chart data rather than requiring clients to calculate them.
+7. Error Handling
+Handle realistic situations instead of only the successful case:
+• 400 validation errors with clear field-level messages
+• 401 unauthenticated requests
+• 403 unauthorized requests
+• 404 resource not found errors
+• 409 conflicts such as duplicate unique values
+• 500 unexpected server errors handled without leaking stack traces
+• Empty results returned as a valid 200 response with an empty list
+• Use a consistent API error response format such as statusCode, message, error, timestamp and path, with a global exception filter and validation pipe.
+8. Security and Best Practices
+Hash passwords using bcrypt or Argon2 and never return password hashes in responses
+• JWT authentication with an expiry time and auth guards protecting secured routes
+• Whitelist DTO fields so unexpected properties are rejected or stripped
+• Use parameterized queries through the ORM and avoid unsafe raw SQL construction
+• Apply appropriate security practices such as Helmet and rate limiting, including rate limiting on login
+• Do not commit secrets; provide a .env.example file
+• Protect sensitive resources with appropriate authorization checks where required by the data model
+9. Code Quality
+Clean modular NestJS structure with module, controller, service, DTO and entity/model separation
+• Keep controllers thin and place business logic in services
+• Reuse common logic such as pagination, filtering helpers and response formatting
+• Use proper TypeScript types and interfaces and avoid unnecessary any usage
+• Use meaningful file, class, variable and function names
+• Add sensible logging and handle errors gracefully
+• Use clear, meaningful Git commits
+10. Important Rules
+• Use the Figma design as the reference for determining backend data requirements, entities, relationships, filters, search, sorting, pagination, statistics, charts, forms, status values and detail APIs
+• You must build the backend with NestJS, PostgreSQL and REST APIs
+• Do not use Firebase, Supabase, json-server or any other ready-made backend service in place of your own backend
+• Do not hard-code or mock API responses; all application data must come from PostgreSQL
+• Do not expose secrets or private keys in the repository
+• Use database migrations for schema changes and provide seed data for local evaluation
+• Document environment variables and setup steps clearly in the README
+Swagger OR OpenAPI OR Postman documentation must cover the implemented REST endpoints
+11. Submission
+• Submit the following backend-related deliverables within 48 hours:
+• Backend source code repository (GitHub or equivalent)
+• README with setup and run instructions, environment variables, migrations and seed instructions
+• Swagger / OpenAPI / Postman documentation and URL, plus a Postman collection if available
+• ER diagram / PostgreSQL schema documentation
+• Seeded test admin credentials
+12. Evaluation
+The submission will be evaluated only on backend development and production readiness:
+• NestJS architecture and TypeScript usage
+• PostgreSQL schema design, relationships, migrations and seed data
+• REST API design and completeness, including appropriate GET, POST, PATCH/PUT and DELETE operations
+• Pagination, search, filtering, sorting and relevant date filtering
+• Authentication, authorization, validation, error handling and security practices
+• Swagger / OpenAPI / Postman documentation and README quality
+• Code quality, maintainability and project structure
+• Dashboard statistics and chart data returned correctly by the backend
+• Production readiness and sensible API behaviour
+• Short explanation of the backend architecture, module structure and PostgreSQL schema relationships
+13. Optional Bonus (Not Required)
+Bonus items are only a plus. Complete all required items first.
+• Docker Compose setup for backend and PostgreSQL
+• Unit and/or end-to-end tests
+• Role-based access control
+• Soft delete and audit logging
+• Caching such as Redis for dashboard statistics
+• CSV export of tables where supported by the requirements
+• Deployed backend and database
+14. Final Candidate Brief
+• Your task is to build a secure, well-structured NestJS and PostgreSQL backend based on the functionality represented in the provided Figma design. The system should demonstrate strong API design, database modelling, validation, authentication, security, documentation and code quality.
+• You have 2 days (48 hours) to complete the assignment. Focus on correctness, clean architecture, realistic data, well-designed APIs and a maintainable PostgreSQL schema.
+Please submit your final backend work within 2 days (48 hours).
+
+
+
+

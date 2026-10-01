@@ -66,13 +66,13 @@ export class UsersQueryDto extends DateFilterQueryDto {
 }
 
 export class CreateUserDto {
-  @ApiProperty({ maxLength: 80 })
+  @ApiProperty({ maxLength: 80, example: 'Visaj' })
   @IsString()
   @MinLength(1)
   @MaxLength(80)
   firstName: string;
 
-  @ApiPropertyOptional({ maxLength: 80, nullable: true })
+  @ApiPropertyOptional({ maxLength: 80, nullable: true, example: 'Panchal' })
   @IsOptional()
   @IsString()
   @MaxLength(80)
@@ -116,14 +116,14 @@ export class CreateUserDto {
 }
 
 export class UpdateUserDto {
-  @ApiPropertyOptional({ maxLength: 80 })
+  @ApiPropertyOptional({ maxLength: 80, example: 'Visaj' })
   @IsOptional()
   @IsString()
   @MinLength(1)
   @MaxLength(80)
   firstName?: string;
 
-  @ApiPropertyOptional({ maxLength: 80, nullable: true })
+  @ApiPropertyOptional({ maxLength: 80, nullable: true, example: 'Panchal' })
   @IsOptional()
   @IsString()
   @MaxLength(80)

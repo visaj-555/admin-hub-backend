@@ -168,8 +168,9 @@ export class UpdateBookingDto {
 
 export class BookingParamDto {
   @ApiProperty({
-    description: 'Booking UUID or public booking number',
-    example: 'BKG-0045',
+    format: 'uuid',
+    description: 'Booking UUID',
+    example: '0b41df31-6975-4f0f-b8b6-c0e2256b6281',
   })
   @Matches(
     /^(?:[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}|BKG-[A-Z0-9-]{1,30})$/i,
